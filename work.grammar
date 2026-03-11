@@ -1,0 +1,13 @@
+bet       = @import("bet.grammar");
+// Grammar
+Work      = { stmt sep };
+stmt      = decl
+          | call
+          ;
+decl      = bet.enum
+          | bet.const
+          | bet.var
+          | bet.documentation
+          ;
+call      = bet.call;
+sep = bet.separator;

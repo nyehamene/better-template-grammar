@@ -1,0 +1,42 @@
+literals        = @import("literals.grammar");
+bet             = @import("bet.grammar");
+// Style
+Style           = "style" "(" [ style_params ] ")" style_block;
+style_params    = style_param { "," style_param } [ "," ];
+style_param     = literals.ident ":" bet.qual_ident { style_param_tag };
+style_param_tag = "@" "var" "(" literals.string [ "," literals.string ] [ "," ] ")";
+// Block
+style_block     = "{" [ style_rules ] "}";
+style_rules     = style_rule { ";" style_rule } [ ";" ];
+style_rule      = decl
+                | literals.CommentStyle
+                ;
+decl            = property;
+property        = ident ":" property_value [ "!" "important" ];
+property_value  = expr { expr };
+expr            = basic_expr
+                | color_hex
+                | function_call
+                | expr_list
+                | "(" expr ")"
+                ;
+basic_expr      = literals.string
+                | literals.bool
+                | ident
+                | number
+                | size
+                | percentage
+                | literals.bool
+                ;
+calc_expr       = binary_expr | unary_expr;
+binary_expr     = expr ( "+" | "-" | "*" | "/" ) expr;
+unary_expr      = ( "+" | "-" ) expr;
+function_call   = ident "(" { expr | calc_expr } ")";
+size            = number ident;
+percentage      = number "%";
+color_hex       = "#" { literals.digit_hex };
+expr_list       = expr { [ "," ] expr };
+number          = literals.number_dec;
+ident           = literals.ident
+                | literals.ident_dash
+                ;

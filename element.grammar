@@ -1,0 +1,53 @@
+literals          = @import("literals.grammar");
+styles            = @import("style.grammar");
+bet               = @import("bet.grammar");
+// Element
+Element           = string_element
+                  | if_element
+                  | cond_element
+                  | component_element
+                  ;
+// String element
+string_element    = literals.string
+                  | bet.string_group
+                  ;
+// If element
+if_element        = "(" "if" expr Element [ Element ] ")";
+// Cond element
+cond_element      = "(" "cond" expr cond_case { cond_case } ")";
+cond_case         = basic_expr Element;
+// Component element
+component_element = "(" component_ident [ property_group ] { component_body } ")";
+component_ident   = literals.ident
+                  | bet.qual_ident
+                  ;
+component_body    = attribute_group | Element;
+property_group    = "[" [ properties ] "]";
+properties        = property { [ "," ] property } [ "," ];
+property          = literals.ident "=" property_value;
+property_value    = attribute_value;
+// Attribute
+attribute_group   = "{" [ attributes ] "}";
+attributes        = attribute { [ "," ] attribute } [ "," ];
+attribute         = attribute_ident "=" [ attribute_value ];
+attribute_ident   = literals.ident
+                  | literals.ident_dash
+                  | literals.ident ":" attribute_ident
+                  ;
+attribute_value   = expr
+                  | bet.string_group
+                  | bet.call
+                  | styles.size
+                  | styles.percentage
+                  | styles.color_hex
+                  ;
+// Expression
+expr              = basic_expr
+                  | bet.if_expr
+                  | bet.cond_expr
+                  ;
+basic_expr        = literals.string
+                  | bet.qual_ident
+                  | literals.number
+                  | literals.bool
+                  ;

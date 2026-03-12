@@ -1,58 +1,21 @@
-literals        = @import("literals.grammar");
-elements        = @import("element.grammar");
-styles          = @import("style.grammar");
-// Grammar
-Bet             = { decl separator };
-// Declaration
-decl            = const
-                | var
-                | documentation
-                ;
-const           = var_ident ":" [ qual_ident ] ":" top_level_expr;
-var             = var_ident ":" [ qual_ident ] "=" top_level_expr
-                | var_ident ":" member_access
-                ;
-var_ident       = literals.ident
-                | literals.ident_blank
-                ;
-documentation   = literals.ident ":" literals.string
-                | literals.ident ":" string_group
-                ;
-// Expression
-top_level_expr  = expr
-                | enum
-                | component
-                | styles.Style
-                ;
-expr            = basic_expr
-                | if_expr
-                | cond_expr
-                | call
-                ;
-if_expr         = "(" "if" expr expr [ expr ] ")";
-cond_expr       = "(" "cond" expr cond_expr_case { cond_expr_case } ")";
-cond_expr_case  = basic_expr expr;
-call            = function_ident function_args;
-function_args   = "(" [ { expr { "," expr } } [ "," ] ] ")";
-function_ident  = literals.ident
-                | literals.ident_blank
-                | "@" literals.ident
-                ;
-// Enum
-enum            = "enum" "{" { enum_member } "}";
-enum_member     = literals.ident separator;
-// Component
-component       = "component" "{" [ component_body ] "}";
-component_body  = [ component_props ] elements.Element { elements.Element };
-component_props = component_prop { separator component_prop };
-component_prop  = const | var;
-// Alias
-basic_expr      = literals.basic_expr
-                | qual_ident
-                ;
-qual_ident      = [ literals.ident "." ] literals.ident;
-member_access   = selector { "." selector };
-selector        = qual_ident | call;
-string_group    = literals.string { "\n" literals.string_line };
-// Keyword
-separator       = literals.Separator;
+core       = @import("core/core.grammar");
+components = @import("core/component.grammar");
+styles     = @import("core/style.grammar");
+
+Bet        = { decl core.separator };
+decl       = const
+           | var
+           | doc
+           ;
+const      = decl_ident ":" [ core.qual_ident ] ":" expr;
+var        = decl_ident ":" [ core.qual_ident ] "=" expr
+           | decl_ident ":" core.qual_ident
+           ;
+doc        = core.ident ":" core.string
+           | core.ident ":" core.string_lines
+           ;
+decl_ident = core.ident;
+expr       = core.expr
+           | components.Component
+           | styles.Style
+           ;

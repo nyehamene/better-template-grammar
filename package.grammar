@@ -1,0 +1,14 @@
+core    = @import("core/core.grammar");
+bet     = @import("bet.grammar");
+Package = { stmt core.separator };
+stmt    = decl
+        | core.call
+        ;
+decl    = const
+        | var
+        | bet.doc
+        ;
+const   = bet.decl_ident ":" [ core.qual_ident ] ":" core.expr;
+var     = bet.decl_ident ":" [ core.qual_ident ] "=" core.expr
+        | bet.decl_ident ":" core.qual_ident
+        ;

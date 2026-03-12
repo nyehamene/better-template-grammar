@@ -1,0 +1,65 @@
+core = @import("core.grammar");
+
+// Component
+Component      = "component" "{" [ component_body ] "}";
+component_body = [ fields ] element { element };
+fields         = field { core.separator field };
+field          = field_const [ field_tag ]
+               | field_var [ field_tag ]
+               ;
+field_const    = core.ident ":" [ core.qual_ident ] ":" field_value;
+field_var      = core.ident ":" [ core.qual_ident ] "=" field_value
+               | core.ident ":" core.qual_ident
+               ;
+field_tag      = "@" core.call;
+field_value    = expr
+               | core.string_lines
+               | core.call
+               | core.size
+               | core.percentage
+               | core.color_hex
+               ;
+
+// Element
+// ============
+element            = string_element
+                   | if_element
+                   | cond_element
+                   | component_element
+                   ;
+string_element     = core.string
+                   | core.string_lines
+                   ;
+if_element         = "(" "if" expr element [ element ] ")";
+cond_element       = "(" "cond" expr cond_case { cond_case } ")";
+cond_case          = basic_expr element;
+component_element  = "(" component_ident [ property_group ] { component_children } ")";
+component_ident    = core.ident
+                   | core.qual_ident
+                   ;
+component_children = attribute_group | element;
+property_group     = "[" [ properties ] "]";
+properties         = property { [ "," ] property } [ "," ];
+property           = core.ident "=" property_value;
+property_value     = field_value;
+// Attribute
+attribute_group    = "{" [ attributes ] "}";
+attributes         = attribute { [ "," ] attribute } [ "," ];
+attribute          = attribute_ident "=" [ attribute_value ];
+attribute_ident    = core.ident
+                   | core.ident_dash
+                   | core.ident ":" attribute_ident
+                   ;
+attribute_value    = field_value;
+
+// Expression
+// ================
+expr       = basic_expr
+           | core.if_expr
+           | core.cond_expr
+           ;
+basic_expr = core.string
+           | core.qual_ident
+           | core.number
+           | core.bool
+           ;

@@ -1,0 +1,13 @@
+[[language]]
+name = "grammar"
+scope = "source.grammar"
+injection-regex = "grammar"
+file-types = ["grammar"]
+comment-tokens = "//"
+indent = { tab-width = 2, unit = "  " }
+formatter = { command = "grammar", args = ["fmt", "--stdin"] }
+language-servers = ["grammar"]
+[language-server.grammar]
+command = "grammar"
+args = ["lsp", "--log", "grammar.ls.log", "--pretty"]
+config = { provideFormatter = true }

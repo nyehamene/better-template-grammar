@@ -2,20 +2,15 @@ core       = @import("core/core.grammar");
 components = @import("core/component.grammar");
 styles     = @import("core/style.grammar");
 
-Bet        = { decl core.separator };
-decl       = const
-           | var
-           | doc
-           ;
-const      = decl_ident ":" [ core.qual_ident ] ":" expr;
-var        = decl_ident ":" [ core.qual_ident ] "=" expr
-           | decl_ident ":" core.qual_ident
-           ;
-doc        = core.ident ":" core.string
-           | core.ident ":" core.string_lines
-           ;
-decl_ident = core.ident;
-expr       = core.expr
-           | components.Component
-           | styles.Style
-           ;
+Bet         = { decl core.separator };
+decl        = var;
+var         = core.ident ( var_type | var_default | var_doc );
+var_type    = ":" core.type;
+var_default = [ var_type ] ( ":" | "=" ) expr;
+var_doc     = core.string
+            | core.string_lines
+            ;
+expr        = core.expr
+            | components.Component
+            | styles.Style
+            ;

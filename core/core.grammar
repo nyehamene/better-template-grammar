@@ -1,5 +1,4 @@
 // Expression
-// ===================
 expr         = primary_expr
              | call
              | if_expr
@@ -13,18 +12,20 @@ primary_expr = string
              | number
              | ident
              | ident_dash
+             | "." ident
              | size
              | percentage
              | color_hex
+             | slice_literal
+             | map_literal
              ;
 
 // Identifier
-// ===================
 bool       = "true" | "false";
 ident      = /[a-zA-Z_][a-zA-Z0-9_]*/;
 ident_dash = /(--)?[a-zA-Z_-][a-zA-Z0-9_-]*/;
+
 // Number
-// ===================
 digit_hex  = /[a-fA-F0-9]/;
 digit_bin  = "0" | "1";
 integer    = /[1-9]/;
@@ -37,13 +38,11 @@ number     = number_dec
            ;
 
 // Size and color
-// ===================
 size       = number ident;
 percentage = number "%";
 color_hex  = "#" { digit_hex };
 
 // String & String line
-// ===================
 string               = "\"" { string_content } "\"";
 string_line          = "\\" { string_content };
 string_content       = escape_char
@@ -62,22 +61,34 @@ escape_char          = "\\\\"
                      ;
 string_lines         = string { "\n" string_line };
 member_access        = { selector "." } expr;
-selector             = qual_ident | call;
-qual_ident           = { ident "." } ident;
+selector             = ident | call;
 
 // Function call
-// ===================
 call           = function_ident function_args;
 function_args  = "(" [ expr { "," expr } [ "," ] ] ")";
 function_ident = [ "@" ] ident;
 if_expr        = "(" "if" expr expr [ expr ] ")";
 cond_expr      = "(" "cond" expr cond_expr_case { cond_expr_case } ")";
 cond_expr_case = primary_expr expr;
+
 // Enumerations
-// ===================
-enum           = "enum" "{" { enum_member } "}";
-enum_member    = ident separator;
+enum        = "enum" "{" { enum_member } "}";
+enum_member = ident separator;
+
+// Slice & Map Literals
+slice_literal = type_slice "{" {expr} "}";
+map_literal = type_map "{" { expr "=" expr} "}";
+
+// Type
+type       = ident
+           | qual_ident
+           | type_slice
+           | type_map
+           ;
+qual_ident = ident "." ident { "." ident };
+type_slice = "[" "]" type;
+type_map   = "map" "[" type "]" type;
+
 // Separator & comment
-// ===================
-separator      = ";" | "\n" | $EOF;
-Comment        = "//" /[^\n]*[\n]?/;
+separator = ";" | "\n" | $EOF;
+Comment   = "//" /[^\n]*[\n]?/;

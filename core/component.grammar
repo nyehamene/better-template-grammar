@@ -1,16 +1,13 @@
 core = @import("core.grammar");
+type = @import("type.grammar");
 
 // Component
 Component      = "component" "{" [ component_body ] "}";
 component_body = [ fields ] element { element };
 fields         = field { core.separator field };
-field          = field_const [ field_tag ]
-               | field_var [ field_tag ]
-               ;
-field_const    = core.ident ":" [ core.qual_ident ] ":" field_value;
-field_var      = core.ident ":" [ core.qual_ident ] "=" field_value
-               | core.ident ":" core.qual_ident
-               ;
+field          = core.ident ( field_type | field_default ) [ field_tag ];
+field_default  = [ field_type ] ( ":" | "=" ) field_value;
+field_type     = ":" type.Type;
 field_tag      = "@" core.call;
 field_value    = expr
                | core.string_lines

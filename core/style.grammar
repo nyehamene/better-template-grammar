@@ -1,8 +1,9 @@
 core          = @import("core.grammar");
+type          = @import("type.grammar");
 // Style
 Style         = "style" "(" [ parameters ] ")" block;
 parameters    = parameter { "," parameter } [ "," ];
-parameter     = core.ident ":" core.qual_ident { parameter_tag };
+parameter     = core.ident ":" type.Type { parameter_tag };
 parameter_tag = "@" "var" "(" core.string [ "," core.string ] [ "," ] ")";
 block         = "{" [ rules ] "}";
 rules         = rule { ";" rule } [ ";" ];

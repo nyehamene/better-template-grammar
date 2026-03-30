@@ -1,0 +1,51 @@
+core            = @import("core.grammar");
+// css
+Rule            = "css" "(" [ parameters [ "," ] ] ")" block;
+parameters      = parameter { "," parameter };
+parameter       = core.ident ( parameter_type | parameter_initr ) [ parameter_tag ];
+parameter_type  = ":" core.type;
+parameter_initr = [ parameter_type ] "=" css_value;
+parameter_tag   = "@" "def" "(" ident [ "," ident ] [ "," ] ")";
+block           = "{" { body } "}";
+body            = property ";"
+                | nested_rule
+                ;
+property        = ident ":" css_value [ "!" "important" ];
+nested_rule     = ident "=" "css" block;
+
+// Expression
+css_value        = value_list;
+value_list       = value_list_slash { value_list_slash };
+value_list_slash = value_list_comma { "/" value_list_comma };
+value_list_comma = css_call { "," css_call };
+
+css_call = primary_css_expr "(" css_value ")"
+         | primary_css_expr
+         ;
+
+calc        = "calc" "(" term_expr ")";
+term_expr   = factor_expr { ( "-" | "+" ) factor_expr };
+factor_expr = unary_expr { ( "/" | "*" ) unary_expr };
+unary_expr  = ( "-" ) unary_expr
+            | group_expr
+            ;
+group_expr  = "(" term_expr ")"
+            | css_call
+            ;
+
+primary_css_expr = core.string
+                 | core.bool
+                 | ident
+                 | number
+                 | core.size
+                 | core.percentage
+                 | core.color_hex
+                 | calc
+                 ;
+number           = core.number_dec;
+ident            = core.ident
+                 | core.ident_dash
+                 ;
+
+// Comment
+comment_css = "/*" /.*/ "*/";

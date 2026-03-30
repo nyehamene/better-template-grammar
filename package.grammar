@@ -1,4 +1,4 @@
-bet  = @import("bet.grammar");
+bet  = @import("module.grammar");
 core = @import("core/core.grammar");
 
 Package     = { stmt core.separator };

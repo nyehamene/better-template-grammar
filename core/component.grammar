@@ -1,14 +1,12 @@
 core = @import("core.grammar");
-type = @import("type.grammar");
 
 // Component
-Component      = "component" "{" [ component_body ] "}";
-component_body = [ fields ] element { element };
-fields         = field { core.separator field };
-field          = core.ident ( field_type | field_default ) [ field_tag ];
-field_default  = [ field_type ] ( ":" | "=" ) field_value;
-field_type     = ":" type.Type;
-field_tag      = "@" core.call;
+Component      = "component" "{" { field core.separator } [ component_body ] "}";
+component_body = element { element };
+field          = core.ident ( field_type | [ field_type ] field_initr ) [ field_tag ];
+field_initr    = ( ":" | "=" ) field_value;
+field_type     = ":" core.type;
+field_tag      = "@" core.ident "(" core.expr_list ")";
 field_value    = expr
                | core.string_lines
                | core.call
@@ -18,39 +16,38 @@ field_value    = expr
                ;
 
 // Element
-// ============
-element            = string_element
-                   | if_element
-                   | cond_element
-                   | component_element
-                   ;
-string_element     = core.string
-                   | core.string_lines
-                   ;
-if_element         = "(" "if" expr element [ element ] ")";
-cond_element       = "(" "cond" expr cond_case { cond_case } ")";
-cond_case          = basic_expr element;
-component_element  = "(" component_ident [ property_group ] { component_children } ")";
-component_ident    = core.ident
-                   | core.qual_ident
-                   ;
-component_children = attribute_group | element;
-property_group     = "[" [ properties ] "]";
-properties         = property { [ "," ] property } [ "," ];
-property           = core.ident "=" property_value;
-property_value     = field_value;
+element           = string_element
+                  | if_element
+                  | cond_element
+                  | component_element
+                  ;
+string_element    = core.string
+                  | core.string_lines
+                  ;
+if_element        = "(" "if" expr element [ element ] ")";
+cond_element      = "(" "cond" expr cond_element_case { cond_element_case } ")";
+component_element = "(" component_tag [ element_model ] { children } ")";
+component_tag     = core.ident
+                  | core.qual_ident
+                  ;
+cond_element_case = basic_expr element;
+element_model     = "[" ( core.ident | core.qual_ident ) "]";
+children          = attribute_group | element;
+
 // Attribute
-attribute_group    = "{" [ attributes ] "}";
-attributes         = attribute { [ "," ] attribute } [ "," ];
-attribute          = attribute_ident "=" [ attribute_value ];
-attribute_ident    = core.ident
-                   | core.ident_dash
-                   | core.ident ":" attribute_ident
-                   ;
-attribute_value    = field_value;
+attribute_group = "{" [ attributes [ "," ] ] "}";
+attributes      = attribute { [ "," ] attribute };
+attribute       = attribute_key [ "=" attribute_value ];
+attribute_key   = core.ident
+                | core.ident_dash
+                | attribute_key_namespaced
+                | core.string
+                ;
+attribute_value = field_value;
+
+attribute_key_namespaced = core.ident ":" ( core.ident | core.ident_dash );
 
 // Expression
-// ================
 expr       = basic_expr
            | core.if_expr
            | core.cond_expr

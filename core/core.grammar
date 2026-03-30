@@ -1,23 +1,26 @@
 // Expression
 expr         = primary_expr
+             | builtin
              | call
              | if_expr
              | cond_expr
              | enum
              | member_access
              ;
-primary_expr = string
+primary_expr = "currentcolor"
+             | "." ident
+             | string
              | string_lines
              | bool
              | number
-             | ident
-             | ident_dash
-             | "." ident
              | size
              | percentage
              | color_hex
+             | ident
+             | ident_dash
              | slice_literal
              | map_literal
+             | "(" expr ")"
              ;
 
 // Identifier
@@ -59,25 +62,28 @@ escape_char          = "\\\\"
                      | "\\v"
                      | "\\n"
                      ;
-string_lines         = string { "\n" string_line };
-member_access        = { selector "." } expr;
-selector             = ident | call;
+string_lines         = string_line { string_line };
 
 // Function call
-call           = function_ident function_args;
-function_args  = "(" [ expr { "," expr } [ "," ] ] ")";
-function_ident = [ "@" ] ident;
+call      = primary_expr "(" [ expr_list [ "," ] ] ")";
+expr_list = expr { "," expr };
+
+builtin        = "@" call;
+member_access  = primary_expr member { member };
+member         = "." ( ident | call );
 if_expr        = "(" "if" expr expr [ expr ] ")";
 cond_expr      = "(" "cond" expr cond_expr_case { cond_expr_case } ")";
 cond_expr_case = primary_expr expr;
 
 // Enumerations
-enum        = "enum" "{" { enum_member } "}";
-enum_member = ident separator;
+enum         = "enum" "{" [ enum_members ] "}";
+enum_members = ident { separator ident };
 
 // Slice & Map Literals
-slice_literal = type_slice "{" {expr} "}";
-map_literal = type_map "{" { expr "=" expr} "}";
+slice_literal  = type_slice "{" [ expr_list [ "," ] ] "}";
+map_literal    = type_map "{" [ map_entry_list [ "," ] ] "}";
+map_entry_list = map_entry { "," map_entry };
+map_entry      = expr "=" expr;
 
 // Type
 type       = ident
@@ -89,6 +95,7 @@ qual_ident = ident "." ident { "." ident };
 type_slice = "[" "]" type;
 type_map   = "map" "[" type "]" type;
 
-// Separator & comment
-separator = ";" | "\n" | $EOF;
+// Statement separator & comment
+// Supports automatic semicolon insertion on newline
+separator = ";";
 Comment   = "//" /[^\n]*[\n]?/;

@@ -6,10 +6,8 @@ Module    = { decl };
 decl      = var core.separator;
 var       = core.ident ( var_type | var_initr | var_doc );
 var_type  = ":" core.type;
-var_initr = [ var_type ] ( ":" | "=" ) expr;
-var_doc   = core.string
-          | core.string_lines
-          ;
+var_initr = ( var_type | ":" ) ( ":" | "=" ) expr;
+var_doc   = ":" ( core.string | core.string_lines );
 expr      = core.expr
           | components.Component
           | css.Rule

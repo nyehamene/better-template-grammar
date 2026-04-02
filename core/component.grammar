@@ -3,8 +3,8 @@ core = @import("core.grammar");
 // Component
 Component      = "component" "{" { field core.separator } [ component_body ] "}";
 component_body = element { element };
-field          = core.ident ( field_type | [ field_type ] field_initr ) [ field_tag ];
-field_initr    = ( ":" | "=" ) field_value;
+field          = core.ident ( field_type | field_initr ) [ field_tag ];
+field_initr    = ( var_type | ":" ) ( ":" | "=" ) field_value;
 field_type     = ":" core.type;
 field_tag      = "@" core.ident "(" core.expr_list ")";
 field_value    = expr

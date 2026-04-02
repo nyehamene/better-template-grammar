@@ -2,12 +2,11 @@ core       = @import("core/core.grammar");
 components = @import("core/component.grammar");
 css        = @import("core/css.grammar");
 
-Module    = { decl };
-decl      = var core.separator;
-var       = core.ident ( var_type | var_initr | var_doc );
+Module    = { ( doc | var ) } core.separator;
+var       = core.ident ( var_type | var_initr );
 var_type  = ":" core.type;
 var_initr = ( var_type | ":" ) ( ":" | "=" ) expr;
-var_doc   = ":" ( core.string | core.string_lines );
+doc       = core.ident ":" ( core.string | core.string_lines );
 expr      = core.expr
           | components.Component
           | css.Rule

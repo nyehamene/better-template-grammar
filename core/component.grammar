@@ -1,4 +1,5 @@
 core = @import("core.grammar");
+css  = @import("css.grammar");
 
 // Component
 Component      = "component" "{" { field core.separator } [ component_body ] "}";
@@ -32,18 +33,27 @@ component_tag     = core.ident
                   ;
 cond_element_case = basic_expr element;
 element_model     = "[" ( core.ident | core.qual_ident ) "]";
-children          = attribute_group | element;
+children          = [ attribute_ns ] attribute_group
+                  | [ attribute_ns ] inline_css
+                  | element
+                  ;
+inline_css        = "css" [ ns_selector_group ] css.block;
 
 // Attribute
-attribute_group = "{" [ attributes [ "," ] ] "}";
-attributes      = attribute { [ "," ] attribute };
-attribute       = attribute_key [ "=" attribute_value ];
-attribute_key   = core.ident
-                | core.ident_dash
-                | attribute_key_namespaced
-                | core.string
-                ;
-attribute_value = field_value;
+attribute_group   = "{" [ attributes [ "," ] ] "}";
+attributes        = attribute { [ "," ] attribute };
+attribute         = attribute_key [ "=" attribute_value ];
+attribute_ns      = "@" core.qual_ident [ ns_selector_group ];
+attribute_key     = core.ident
+                  | core.ident_dash
+                  | attribute_key_namespaced
+                  | core.string
+                  ;
+attribute_value   = field_value;
+ns_selector_group = "[" core.string { "," ns_selector } [ "," ] "]";
+ns_selector       = ":" [ ":" ] ( core.ident_dash | core.ident )
+                  | core.string
+                  ;
 
 attribute_key_namespaced = core.ident ":" ( core.ident | core.ident_dash );
 

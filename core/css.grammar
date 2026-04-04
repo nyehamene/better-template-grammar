@@ -5,7 +5,7 @@ parameters      = parameter { "," parameter };
 parameter       = core.ident ( parameter_type | parameter_initr ) [ parameter_tag ];
 parameter_type  = ":" core.type;
 parameter_initr = ( parameter_type | ":" ) "=" css_value;
-parameter_tag   = "@" "def" "(" ident [ "," ident ] [ "," ] ")";
+parameter_tag   = "@" core.ident "(" ident [ "," ident ] [ "," ] ")";
 block           = "{" { body } "}";
 body            = property ";"
                 | nested_rule

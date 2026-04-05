@@ -1,7 +1,5 @@
 core = @import("core/core.grammar");
 pkg  = @import("package.grammar");
 
-Work = { stmt core.separator };
-stmt = pkg.decl
-     | core.call
-     ;
+Work = { decl core.separator };
+decl = pkg.decl | pkg.stmt;

@@ -8,6 +8,7 @@ var_type  = ":" core.type;
 var_initr = ( var_type | ":" ) ( ":" | "=" ) expr;
 doc       = core.ident ":" ( core.string | core.string_lines );
 expr      = core.expr
+          | core.builtin
           | components.Component
           | css.Rule
           ;

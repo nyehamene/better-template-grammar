@@ -7,14 +7,8 @@ component_body = element { element };
 field          = core.ident ( field_type | field_initr ) [ field_tag ];
 field_initr    = ( var_type | ":" ) ( ":" | "=" ) field_value;
 field_type     = ":" core.type;
-field_tag      = "@" core.ident "(" core.expr_list ")";
-field_value    = expr
-               | core.string_lines
-               | core.call
-               | core.size
-               | core.percentage
-               | core.color_hex
-               ;
+field_tag      = core.Builtin;
+field_value    = expr;
 
 // Element
 element           = string_element
@@ -27,43 +21,43 @@ string_element    = core.string
                   ;
 if_element        = "(" "if" expr element [ element ] ")";
 cond_element      = "(" "cond" expr cond_element_case { cond_element_case } ")";
-component_element = "(" component_tag [ element_model ] { children } ")";
+component_element = "(" component_tag [ element_model ] [ children ] ")";
 component_tag     = core.ident
                   | core.qual_ident
                   ;
 cond_element_case = basic_expr element;
 element_model     = "[" ( core.ident | core.qual_ident ) "]";
-children          = [ attribute_ns ] attribute_group
-                  | [ attribute_ns ] inline_css
+children          = child { child };
+child             = [ elem_selector ] attribute_group
+                  | [ elem_selector ] inline_css
                   | element
                   ;
-inline_css        = "css" [ ns_selector_group ] css.block;
+
+inline_css            = "css" [ pseudo_selector_group ] css.block;
+elem_selector         = "@" core.qual_ident;
+pseudo_selector_group = "[" pseudo_selector { "," pseudo_selector } [ "," ] "]";
+pseudo_selector       = ":" [ ":" ] ( core.ident_dash | core.ident )
+                      | core.string
+                      ;
 
 // Attribute
-attribute_group   = "{" [ attributes [ "," ] ] "}";
-attributes        = attribute { [ "," ] attribute };
-attribute         = attribute_key [ "=" attribute_value ];
-attribute_ns      = "@" core.qual_ident [ ns_selector_group ];
-attribute_key     = core.ident
-                  | core.ident_dash
-                  | attribute_key_namespaced
-                  | core.string
-                  ;
-attribute_value   = field_value;
-ns_selector_group = "[" core.string { "," ns_selector } [ "," ] "]";
-ns_selector       = ":" [ ":" ] ( core.ident_dash | core.ident )
-                  | core.string
-                  ;
-
-attribute_key_namespaced = core.ident ":" ( core.ident | core.ident_dash );
+attribute_group = "{" [ attributes [ "," ] ] "}";
+attributes      = attribute { [ "," ] attribute };
+attribute       = attribute_key [ ":" attribute_value ];
+attribute_key   = core.ident
+                | core.ident_dash
+                | core.string
+                ;
+attribute_value = field_value;
 
 // Expression
-expr       = basic_expr
-           | core.if_expr
-           | core.cond_expr
-           ;
-basic_expr = core.string
+expr       = core.expr;
+basic_expr = core.ident
            | core.qual_ident
-           | core.number
+           | core.string
            | core.bool
+           | core.number
+           | core.size
+           | core.percentage
+           | core.color_hex
            ;

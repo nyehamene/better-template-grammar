@@ -1,6 +1,11 @@
+// Builtin call
+Builtin   = "@" primary_expr "(" [ arg_list [ "," ] ] ")";
+arg_list  = arg { [ "," ] arg };
+arg       = named_arg | expr;
+named_arg = ident "=" expr;
+
 // Expression
 expr         = primary_expr
-             | builtin
              | call
              | if_expr
              | cond_expr
@@ -8,7 +13,6 @@ expr         = primary_expr
              | member_access
              ;
 primary_expr = "currentcolor"
-             | "." ident
              | string
              | string_lines
              | bool
@@ -20,7 +24,6 @@ primary_expr = "currentcolor"
              | ident_dash
              | slice_literal
              | map_literal
-             | "(" expr ")"
              ;
 
 // Identifier
@@ -48,6 +51,7 @@ color_hex  = "#" { digit_hex };
 // String & String line
 string               = "\"" { string_content } "\"";
 string_line          = "\\" { string_content };
+string_lines         = string_line { string_line };
 string_content       = escape_char
                      | string_template_expr
                      | /[^\n"]/
@@ -62,18 +66,13 @@ escape_char          = "\\\\"
                      | "\\v"
                      | "\\n"
                      ;
-string_lines         = string_line { string_line };
 
-// Function call
-call      = primary_expr "(" [ expr_list [ "," ] ] ")";
-expr_list = expr { "," expr };
-
-builtin        = "@" call;
-member_access  = primary_expr member { member };
 member         = "." ( ident | call );
+call           = "(" primary_expr [ arg_list [ "," ] ] ")";
 if_expr        = "(" "if" expr expr [ expr ] ")";
 cond_expr      = "(" "cond" expr cond_expr_case { cond_expr_case } ")";
 cond_expr_case = primary_expr expr;
+member_access  = primary_expr member { member };
 
 // Enumerations
 enum         = "enum" "{" [ enum_members ] "}";
@@ -84,6 +83,7 @@ slice_literal  = type_slice "{" [ expr_list [ "," ] ] "}";
 map_literal    = type_map "{" [ map_entry_list [ "," ] ] "}";
 map_entry_list = map_entry { "," map_entry };
 map_entry      = expr "=" expr;
+expr_list      = expr { "," expr };
 
 // Type
 type       = ident

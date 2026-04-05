@@ -1,9 +1,11 @@
 bet  = @import("module.grammar");
 core = @import("core/core.grammar");
 
-Package   = { ( doc | var | stmt ) } core.separator;
-stmt      = core.call;
+Package   = { decl };
+decl      = ( doc | var | stmt ) core.separator;
+stmt      = core.builtin;
 var       = core.ident ( var_type | var_initr );
 var_type  = ":" core.type;
-var_initr = ( var_type | ":" ) ( ":" | "=" ) core.expr;
+var_initr = ( var_type | ":" ) ( ":" | "=" ) expr;
+expr      = core.expr | core.builtin;
 doc       = core.ident ":" ( core.string | core.string_lines );

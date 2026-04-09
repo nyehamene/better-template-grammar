@@ -79,8 +79,7 @@ map_entry      = expr "=" expr;
 expr_list      = expr { "," expr };
 
 // Type
-type       = ident
-           | qual_ident
+type       = qual_ident
            | type_slice
            | type_map
            ;

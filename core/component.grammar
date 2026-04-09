@@ -24,7 +24,7 @@ cond_element      = "(" "cond" expr cond_element_case { cond_element_case } ")";
 component_element = "(" component_tag [ element_model ] [ children ] ")";
 component_tag     = core.qual_ident;
 cond_element_case = basic_expr element;
-element_model     = "[" ( core.ident | core.qual_ident ) "]";
+element_model     = "[" core.qual_ident "]";
 children          = child { child };
 child             = [ elem_selector ] attribute_group
                   | [ elem_selector ] inline_css
@@ -50,8 +50,7 @@ attribute_value = field_value;
 
 // Expression
 expr       = core.expr;
-basic_expr = core.ident
-           | core.qual_ident
+basic_expr = core.qual_ident
            | core.string
            | core.bool
            | core.number

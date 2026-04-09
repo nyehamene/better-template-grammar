@@ -5,8 +5,7 @@ arg       = named_arg | expr;
 named_arg = ident "=" expr;
 
 // Expression
-expr         = primary_expr
-             | call
+expr         = call
              | if_expr
              | cond_expr
              | enum
@@ -56,23 +55,17 @@ string_content       = escape_char
                      | string_template_expr
                      | /[^\n"]/
                      ;
-string_template_expr = "\\{" primary_expr "}";
-escape_char          = "\\\\"
-                     | "\\\""
-                     | "\\t"
-                     | "\\r"
-                     | "\\s"
-                     | "\\f"
-                     | "\\v"
-                     | "\\n"
-                     ;
+string_template_expr = "\\{" expr "}";
+escape_char          = /\\[\\\s"trsfvn]/;
 
-member         = "." ( ident | call );
-call           = "(" primary_expr [ arg_list [ "," ] ] ")";
+member         = "." ident;
 if_expr        = "(" "if" expr expr [ expr ] ")";
 cond_expr      = "(" "cond" expr cond_expr_case { cond_expr_case } ")";
+call           = "(" member_access [ arg_list [ "," ] ] ")";
 cond_expr_case = primary_expr expr;
-member_access  = primary_expr member { member };
+member_access  = primary_expr member { member }
+               | primary_expr
+               ;
 
 // Enumerations
 enum         = "enum" "{" [ enum_members ] "}";
@@ -91,7 +84,9 @@ type       = ident
            | type_slice
            | type_map
            ;
-qual_ident = ident "." ident { "." ident };
+qual_ident = ident "." ident { "." ident }
+           | ident
+           ;
 type_slice = "[" "]" type;
 type_map   = "map" "[" type "]" type;
 

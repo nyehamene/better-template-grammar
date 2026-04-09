@@ -22,9 +22,7 @@ string_element    = core.string
 if_element        = "(" "if" expr element [ element ] ")";
 cond_element      = "(" "cond" expr cond_element_case { cond_element_case } ")";
 component_element = "(" component_tag [ element_model ] [ children ] ")";
-component_tag     = core.ident
-                  | core.qual_ident
-                  ;
+component_tag     = core.qual_ident;
 cond_element_case = basic_expr element;
 element_model     = "[" ( core.ident | core.qual_ident ) "]";
 children          = child { child };

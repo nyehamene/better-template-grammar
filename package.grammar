@@ -1,9 +1,9 @@
 bet  = @import("module.grammar");
 core = @import("core/core.grammar");
 
-Package   = { decl };
-decl      = ( doc | var | stmt ) core.separator;
-stmt      = core.builtin;
+Package   = { decl | stmt };
+decl      = bet.decl;
+stmt      = core.builtin core.separator;
 var       = core.ident ( var_type | var_initr );
 var_type  = ":" core.type;
 var_initr = ( var_type | ":" ) ( ":" | "=" ) expr;

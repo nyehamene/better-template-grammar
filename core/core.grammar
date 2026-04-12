@@ -1,5 +1,5 @@
 // Builtin call
-Builtin   = "@" primary_expr "(" [ arg_list [ "," ] ] ")";
+Builtin   = "(" "@" primary_expr [ arg_list [ "," ] ] ")";
 arg_list  = arg { [ "," ] arg };
 arg       = named_arg | expr;
 named_arg = ident "=" expr;

@@ -1,15 +1,19 @@
-core       = @import("core/core.grammar");
-components = @import("core/component.grammar");
-css        = @import("core/css.grammar");
+core       = @import("base/core.grammar");
+components = @import("base/component.grammar");
+css        = @import("base/css.grammar");
 
 Module    = { decl };
-decl      = ( doc | var ) core.separator;
+decl      = ( doc | var | import ) core.separator;
 var       = core.ident ( var_type | var_initr );
 var_type  = ":" core.type;
 var_initr = ( var_type | ":" ) ( ":" | "=" ) expr;
 doc       = core.ident ":" ( core.string | core.string_lines );
 expr      = core.expr
-          | core.builtin
           | components.Component
           | css.Rule
           ;
+
+import       = core.ident import_type import_value;
+import_type  = ":" [ "import" ];
+import_value = ( ":" | "=" ) import_expr;
+import_expr  = "import" "(" core.string ")";

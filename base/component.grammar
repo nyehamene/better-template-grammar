@@ -1,4 +1,4 @@
-core = @import("core.grammar");
+core = @import("base.grammar");
 css  = @import("css.grammar");
 
 // Component
@@ -7,7 +7,7 @@ component_body = element { element };
 field          = core.ident ( field_type | field_initr ) [ field_tag ];
 field_initr    = ( var_type | ":" ) ( ":" | "=" ) field_value;
 field_type     = ":" core.type;
-field_tag      = core.Builtin;
+field_tag      = core.Tag;
 field_value    = expr;
 
 // Element

@@ -1,11 +1,12 @@
-bet  = @import("module.grammar");
-core = @import("core/core.grammar");
+core = @import("base/core.grammar");
 
-Package   = { decl | stmt };
-decl      = bet.decl;
-stmt      = core.builtin core.separator;
-var       = core.ident ( var_type | var_initr );
-var_type  = ":" core.type;
-var_initr = ( var_type | ":" ) ( ":" | "=" ) expr;
-expr      = core.expr | core.builtin;
-doc       = core.ident ":" ( core.string | core.string_lines );
+Package = { decl core.separator };
+decl    = ( doc | require | api );
+doc     = core.ident ":" ( core.string | core.string_lines );
+require = "require" "(" core.string ")";
+api     = core.ident ":" ( api_public | api_private );
+
+api_public       = "public";
+api_private      = "private" [ api_private_arg ];
+api_private_arg  = "(" api_private_mode ")";
+api_private_mode = "file" | "module";

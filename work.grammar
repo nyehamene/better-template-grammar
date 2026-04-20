@@ -1,6 +1,4 @@
-core = @import("core/core.grammar");
-pkg  = @import("package.grammar");
+core = @import("base/core.grammar");
 
-Work = { decl | stmt };
-decl = pkg.decl;
-stmt = pkg.stmt;
+Work    = { include core.separator };
+include = "include" "(" core.string ")";

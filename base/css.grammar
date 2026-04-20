@@ -1,4 +1,4 @@
-core = @import("core.grammar");
+core = @import("base.grammar");
 
 // css
 Rule            = "css" "(" [ parameters [ "," ] ] ")" block;
@@ -6,7 +6,7 @@ parameters      = parameter { "," parameter };
 parameter       = core.ident ( parameter_type | parameter_initr ) [ parameter_tag ];
 parameter_type  = ":" core.type;
 parameter_initr = ( parameter_type | ":" ) "=" css_value;
-parameter_tag   = core.Builtin;
+parameter_tag   = core.Tag;
 block           = "{" { body } "}";
 body            = property ";"
                 | nested_rule ";"

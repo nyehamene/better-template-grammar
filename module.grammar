@@ -2,8 +2,9 @@ core       = @import("base/core.grammar");
 components = @import("base/component.grammar");
 css        = @import("base/css.grammar");
 
-Module    = { decl };
-decl      = ( doc | var | import ) core.separator;
+Module    = { stmt core.separator };
+stmt      = decl | expr;
+decl      = doc | var | import;
 var       = core.ident ( var_type | var_initr );
 var_type  = ":" core.type;
 var_initr = ( var_type | ":" ) ( ":" | "=" ) expr;

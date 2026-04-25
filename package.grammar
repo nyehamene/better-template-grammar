@@ -1,12 +1,14 @@
 core = @import("base/core.grammar");
 
-Package = { decl core.separator };
-decl    = ( doc | require | api );
-doc     = core.ident ":" ( core.string | core.string_lines );
-require = "require" "(" core.string ")";
-api     = core.ident ":" ( api_public | api_private );
+Package = { stmt core.separator };
+stmt    = decl | require;
+decl    = doc | api;
 
+require = "require" "(" core.string ")";
+
+doc              = core.ident ":" ( core.string | core.string_lines );
+api              = core.ident ":" ( api_public | api_private );
 api_public       = "public";
 api_private      = "private" [ api_private_arg ];
 api_private_arg  = "(" api_private_mode ")";
-api_private_mode = "file" | "module";
+api_private_mode = /"file"/ | /"package"/;

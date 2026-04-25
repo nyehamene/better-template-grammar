@@ -1,4 +1,5 @@
 core = @import("base/core.grammar");
 
-Work    = { include core.separator };
+Work    = { stmt core.separator };
+stmt    = include;
 include = "include" "(" core.string ")";
